@@ -1,8 +1,12 @@
 package ru.netology.controller;
 
 import com.google.gson.Gson;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.util.UriComponentsBuilder;
+import ru.netology.exception.NotFoundException;
 import ru.netology.model.Post;
 import ru.netology.service.PostService;
 
@@ -32,8 +36,13 @@ public class PostController {
   }
 
   @PostMapping
-  public Post save(@RequestBody Post post){
-    return service.save(post);
+  public ResponseEntity<Post> save(@RequestBody Post post) {
+    try {
+      Post result = service.save(post);
+      return new ResponseEntity<>(result, HttpStatus.OK);
+    } catch (NotFoundException e) {
+      return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
   }
 
   @DeleteMapping("/{id}")
